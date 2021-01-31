@@ -128,6 +128,8 @@ finance_data.head(2)
 
 
 # load covid-19 data from Johns Hopkins Coronavirus Resource Center
+# code for Bo Sun only
+#_covid_19 = pd.read_csv(r"C:\Users\harvey_sun\Desktop\data\time_series_covid19_confirmed_global.csv")
 _covid_19 = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
            error_bad_lines=False)
 
