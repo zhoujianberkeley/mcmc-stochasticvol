@@ -103,8 +103,12 @@ def load_data(regular = True):
     _finance_data = _finance_data.rename({'^GSPC':'SP500', '^VIX':'VIX', '^INDIAVIX':'India_VIX'}, axis=1)
     
     
-    
-    VIX_india = pd.read_csv("indian vix.csv").pipe(pd.DataFrame.rename, columns=lambda x: x.strip()) .pipe(pd.DataFrame.rename, {'Close':'India_VIX'}, axis=1) .pipe(pd.DataFrame.set_index, ['Date']) 
+    try:
+        VIX_india = pd.read_csv("indian vix.csv").pipe(pd.DataFrame.rename, columns=lambda x: x.strip()) .pipe(
+            pd.DataFrame.rename, {'Close':'India_VIX'}, axis=1) .pipe(pd.DataFrame.set_index, ['Date'])
+    except FileNotFoundError:
+        VIX_india = pd.read_csv("../indian vix.csv").pipe(pd.DataFrame.rename, columns=lambda x: x.strip()).pipe(
+            pd.DataFrame.rename, {'Close': 'India_VIX'}, axis=1).pipe(pd.DataFrame.set_index, ['Date'])
     VIX_india.index = VIX_india.reset_index()['Date'].apply(lambda i : datetime.datetime.strptime(i, '%d-%b-%y'))
     finance_data = _finance_data.merge(VIX_india, left_index=True, right_index=True)
     
