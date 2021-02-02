@@ -101,7 +101,7 @@ def load_data(regular = True):
     # load sp500 and vix data use yfinance
     _finance_data = yf.download("^GSPC ^VIX", start="2017-01-01", end="2021-01-11")['Adj Close']
     _finance_data = _finance_data.rename({'^GSPC':'SP500', '^VIX':'VIX', '^INDIAVIX':'India_VIX'}, axis=1)
-    
+    _finance_data['log_returns'] = np.log(_finance_data['SP500']).diff()
     
     try:
         VIX_india = pd.read_csv("indian vix.csv").pipe(pd.DataFrame.rename, columns=lambda x: x.strip()) .pipe(
@@ -156,6 +156,7 @@ def load_data(regular = True):
 
     # merge data 
     data = finance_data.merge(covid_19_data, left_index=True, right_index=True)
+
     return data
 
 
