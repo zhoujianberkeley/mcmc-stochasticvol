@@ -62,8 +62,11 @@
 
 
 import datetime
+import os
+
 import numpy as np
 import pandas as pd
+import pickle
 import yfinance as yf
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
@@ -97,7 +100,11 @@ import yfinance as yf
 
 # ### Data
 
-def load_data(regular = True):    
+def load_data(regular = True, reload=False):
+    if not reload:
+        data = pd.read_pickle("../Data/data.pkl")
+        return data
+
     # load sp500 and vix data use yfinance
     _finance_data = yf.download("^GSPC ^VIX", start="2017-01-01", end="2021-01-11")['Adj Close']
     _finance_data = _finance_data.rename({'^GSPC':'SP500', '^VIX':'VIX', '^INDIAVIX':'India_VIX'}, axis=1)
@@ -156,7 +163,9 @@ def load_data(regular = True):
 
     # merge data 
     data = finance_data.merge(covid_19_data, left_index=True, right_index=True)
-
+    if not os.path.exists("../Data"):
+        os.mkdir("../Data")
+    data.to_pickle("../Data/data.pkl")
     return data
 
 
