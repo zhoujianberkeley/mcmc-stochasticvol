@@ -102,8 +102,11 @@ import yfinance as yf
 
 def load_data(regular = True, reload=False):
     if not reload:
-        data = pd.read_pickle("../Data/data.pkl")
-        return data
+        if os.path.exists("../Data/data.pkl"):
+            data = pd.read_pickle("../Data/data.pkl")
+            return data
+        else:
+            return load_data(reload=True)
 
     # load sp500 and vix data use yfinance
     _finance_data = yf.download("^GSPC ^VIX", start="2017-01-01", end="2021-01-11")['Adj Close']
