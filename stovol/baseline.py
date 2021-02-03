@@ -1,8 +1,4 @@
-
-import arviz as az
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import pymc3 as pm
 
 from dataloader import load_data
@@ -56,12 +52,8 @@ if __name__ == '__main__':
 
     baseline_model = make_covid_model(data, "log_returns")
 
-    # with baseline_model:
-    #     prior = pm.sample_prior_predictive(500)
-    print('**** begin trace ****')
+    with baseline_model:
+        prior = pm.sample_prior_predictive(500)
+
     with baseline_model:
         trace = pm.sample(2000, tune=2000)
-    print('**** end trace ****')
-    with baseline_model:
-        az.plot_trace(trace, var_names=["sigma_ita2", "phi"])
-        plt.show()
