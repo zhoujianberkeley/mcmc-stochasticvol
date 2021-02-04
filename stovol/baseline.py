@@ -23,7 +23,7 @@ def make_baseline_model_AR1(data, observe):
         phi = pm.Beta("phi", alpha=20, beta=1.5)
         scale = pm.InverseGamma("scale", alpha=2.5, beta=0.05)
         _log_vol = pm.AR1("_log_vol", k=phi, tau_e=1/scale, shape=len(data))
-        mu = pm.Normal('mu', mu=0, sigma=1)
+        mu = pm.Exponential('mu', lam=0.1)
         log_vol = pm.Deterministic("log_vol", _log_vol + mu)
         # Likelihood
         returns = pm.Normal("returns", mu=0, sigma=np.exp(log_vol/2), observed=data[observe])
@@ -32,7 +32,7 @@ def make_baseline_model_AR1(data, observe):
 def make_state_model_AR1(data, observe):
     # Prepare data
     nstate = data['covid_state_US'].nunique()
-    log_returns = data["log_returns"].to_numpy()
+    log_returns = data[observe].to_numpy()
     state_idx = data["covid_state_US"].to_numpy()
 
     with pm.Model() as model:
