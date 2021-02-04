@@ -111,8 +111,10 @@ def load_data(regular = True, reload=False):
     # load sp500 and vix data use yfinance
     _finance_data = yf.download("^GSPC ^VIX", start="2017-01-01", end="2021-01-11")['Adj Close']
     _finance_data = _finance_data.rename({'^GSPC':'SP500', '^VIX':'VIX', '^INDIAVIX':'India_VIX'}, axis=1)
-    
-    
+    _finance_data['log_returns'] = np.log(_finance_data['SP500']).diff()
+    _finance_data['returns'] = _finance_data['SP500'].pct_change()
+    _finance_data['real_3w_vol'] = _finance_data['returns'].rolling(window=15).apply(pd.DataFrame.std)
+
     try:
         VIX_india = pd.read_csv("indian vix.csv").pipe(pd.DataFrame.rename, columns=lambda x: x.strip()) .pipe(
             pd.DataFrame.rename, {'Close':'India_VIX'}, axis=1) .pipe(pd.DataFrame.set_index, ['Date'])
@@ -159,8 +161,10 @@ def load_data(regular = True, reload=False):
                                                                        'cases_growth_global', 
                                                                        'cases_growth_India']], 
                                                      left_index=True, right_index=True)
-    
-    
+    # set covid state for US, use 0.05 as threshold line
+    covid_19_data.loc[:, 'covid_state_US'] = 0
+    covid_19_data.loc[covid_19_data.cases_growth_US > 0.05, 'covid_state_US'] = 1
+
     covid_19_data.index = covid_19_data.reset_index()['index'].apply(lambda i : datetime.datetime.strptime(i, '%m/%d/%y'))
     
 
@@ -173,5 +177,5 @@ def load_data(regular = True, reload=False):
 
 
 if __name__ == '__main__':
-    data = load_data()
+    data = load_data(reload=True)
     print (data.tail(3))
