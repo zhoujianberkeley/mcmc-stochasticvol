@@ -41,7 +41,6 @@ def load_data(regular = True, reload=False):
     # We load covid-19 data from Johns Hopkins Coronavirus Resource Center.
     # The raw data is taken a gaussian smoothing with a 2-week window size and standard deviation 3.
 
-
     # load covid-19 data from Johns Hopkins Coronavirus Resource Center
     # code for Bo Sun only
     if regular:
